@@ -100,3 +100,7 @@ def test_total_wrong_promo(cart):
     cart.add_item("phone", 1)
     with pytest.raises(ValueError):
         cart.get_total("FAKE")
+
+def test_total_with_promo_50(cart):
+    cart.add_item("phone", 2)
+    assert cart.get_total("SAVE50") == 1000

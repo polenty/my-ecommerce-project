@@ -1,5 +1,5 @@
 # Промокоды: код -> скидка в процентах
-PROMO_CODES = {"SAVE10": 10, "SAVE20": 20}
+PROMO_CODES = {"SAVE10": 10, "SAVE20": 20, "SAVE50": 50}
 
 
 class ShoppingCart:

@@ -1,0 +1,46 @@
+name: CI
+
+# Триггеры: запуск при каждом push и pull request в main/master
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:        # изменения только в документации не запускают тесты
+      - "**.md"
+      - "docs/**"
+  pull_request:
+    branches: [main, master]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+
+jobs:
+  test:
+    # Виртуальная машина, на которой выполняются шаги
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Скачиваем код репозитория на runner
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Разворачиваем окружение Python + кэшируем pip-зависимости
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip                               # кэш pip
+          cache-dependency-path: requirements.txt  # ключ кэша — хэш этого файла
+
+      # 3. Устанавливаем зависимости из requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Запускаем тесты под управлением coverage
+      - name: Run tests with coverage
+        run: coverage run -m pytest
+
+      # 5. Отчёт о покрытии; шаг падает, если покрытие < 80%
+      - name: Check coverage (min 80%)
+        run: coverage report -m --fail-under=80
